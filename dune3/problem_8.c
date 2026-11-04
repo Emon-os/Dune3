@@ -78,3 +78,79 @@ int main(int argc, char **argv)
     MPI_Finalize();
     return 0;
 }
+
+
+/*
+
+
+#include <stdio.h>
+#include <mpi.h>
+
+int main(int argc, char **argv)
+{
+    int rank, processes;
+    int message, received;
+
+    MPI_Init(&argc, &argv);
+
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &processes);
+
+    if (processes != 2)
+    {
+        if (rank == 0)
+            printf("Run with exactly 2 processes.\n");
+
+        MPI_Finalize();
+        return 1;
+    }
+
+    message = (rank == 0) ? 100 : 200;
+
+    // Unsafe version: Deadlock demonstration
+    if (rank == 0)
+        printf("P0: Waiting to send 100\n");
+    else
+        printf("P1: Waiting to send 200\n");
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    if (rank == 0)
+        printf("Potential deadlock: Both processes may wait!\n");
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    // Corrected version
+    if (rank == 0)
+        printf("\nCorrected version:\n");
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    MPI_Sendrecv(
+        &message, 1, MPI_INT, 1 - rank, 0,
+        &received, 1, MPI_INT, 1 - rank, 0,
+        MPI_COMM_WORLD, MPI_STATUS_IGNORE
+    );
+
+    if (rank == 0)
+    {
+        printf("P0 sent 100\n");
+        printf("P0 received %d\n", received);
+    }
+    else
+    {
+        printf("P1 received 100\n");
+        printf("P1 sent 200\n");
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    if (rank == 0)
+        printf("Communication completed without deadlock.\n");
+
+    MPI_Finalize();
+
+    return 0;
+}
+
+*/
